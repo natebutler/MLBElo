@@ -1,0 +1,10 @@
+project:
+    type: website
+    output-dir: docs
+
+website:
+    title: MLB Elo Ratings
+
+format:
+    html:
+        theme: default

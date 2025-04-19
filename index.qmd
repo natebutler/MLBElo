@@ -1,0 +1,45 @@
+---
+title: "MLB Elo Ratings"
+format:
+  html:
+    embed-resources: true
+    fig-align: center
+    df-print: paged
+echo: false
+---
+
+```{r}
+#| message: false
+# load required packages
+library(httr)
+library(jsonlite)
+library(tidyverse)
+library(dplyr)
+library(stringr)
+library(tibble)
+library(tidyr)
+library(purrr)
+library(mlbplotR)
+library(gt)
+```
+
+
+```{r}
+#| message: false
+# load data
+elo_ratings = readRDS("elo_rating.rds")
+```
+
+```{r}
+elo_ratings %>%
+  gt() %>%
+  text_transform(
+    locations = cells_body(c(Logo)),
+    fn = function(x) {
+      web_image(url = x, height = 40)
+    }
+  ) 
+```
+
+
+Last Updated: `r format(Sys.Date(), "%Y-%m-%d")`

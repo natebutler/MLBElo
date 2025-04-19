@@ -1,0 +1,35 @@
+name: Daily Render
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Every day at 6am UTC
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install R packages
+        run: |
+          Rscript -e 'install.packages(c("gt", "httr", "jsonlite", "tidyverse", "mlbplotR"))'
+
+      - name: Render index.qmd
+        run: quarto render index.qmd
+
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Daily render: $(date -u)" || echo "No changes to commit"
+          git push
