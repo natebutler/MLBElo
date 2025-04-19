@@ -42,4 +42,5 @@ elo_ratings %>%
 ```
 
 
-Last Updated: `r format(Sys.Date(), "%Y-%m-%d")`
+Last Updated: `r format(Sys.time(), "%Y-%m-%d %H:%M %Z")`
+
