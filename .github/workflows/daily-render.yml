@@ -40,27 +40,7 @@ jobs:
             path: ~/.local/share/R
             key: ${{ runner.os }}-r-pkg-${{ hashFiles('**/DESCRIPTION') }}
             restore-keys: |
-              ${{ runner.os }}-r-pkg- 
-              
-        - name: Ensure pak is installed
-          run: |
-            R -e 'if (!requireNamespace("pak", quietly = TRUE)) install.packages("pak", repos = "https://cloud.r-project.org")'      
-  
-        - name: Install R package dependencies (try pak)
-          id: pak-install
-          continue-on-error: true
-          uses: r-lib/actions/setup-r-dependencies@v2
-          with:
-            extra-packages: |
-              gt
-              httr
-              jsonlite
-              tidyverse
-              mlbplotR
-  
-        - name: Fallback install.packages() method
-          if: steps.pak-install.outcome == 'failure'
-          run: Rscript -e 'install.packages(c("gt", "httr", "jsonlite", "tidyverse", "mlbplotR"))'  
+              ${{ runner.os }}-r-pkg-
 
         # - name: Setup r2u
         #   uses: eddelbuettel/github-actions/r2u-setup@master
@@ -68,8 +48,8 @@ jobs:
         # - name: Set up Quarto
         #   uses: quarto-dev/quarto-actions/setup@v2
         # 
-        # - name: Install CRAN packages
-        #   run: Rscript -e 'install.packages(c("gt", "httr", "jsonlite", "tidyverse", "mlbplotR"))'
+        - name: Install CRAN packages
+          run: Rscript -e 'install.packages(c("gt", "httr", "jsonlite", "tidyverse", "mlbplotR"))'
           
         - name: Run get_datatable.R
           run: Rscript get_datatable.R
