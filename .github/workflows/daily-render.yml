@@ -17,8 +17,8 @@ jobs:
     
     permissions:
       contents: write
-
-      steps:
+    
+    steps:
         - name: Checkout repo
           uses: actions/checkout@v3
 
@@ -41,4 +41,5 @@ jobs:
           uses: quarto-dev/quarto-actions/publish@v2
           with:
             render: false
-            target: gh-pages    
+            target: gh-pages
+
