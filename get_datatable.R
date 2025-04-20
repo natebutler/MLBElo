@@ -200,8 +200,11 @@ update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-15", end_da
   return(elo_history[[latest_day]])
 }
 
-### Get Data
-elo_results <- update_elo_ratings(regress = 0.75, k = 10)
+################################################################################
+################################################################################
+###### Get Data
+
+elo_results <- update_elo_ratings(regress = 0.6, k = 4)
 
 team_logos <- load_mlb_teams() %>% select(team_name, team_logo_espn)
 
