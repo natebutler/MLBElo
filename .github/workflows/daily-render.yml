@@ -40,7 +40,11 @@ jobs:
             path: ~/.local/share/R
             key: ${{ runner.os }}-r-pkg-${{ hashFiles('**/DESCRIPTION') }}
             restore-keys: |
-              ${{ runner.os }}-r-pkg-  
+              ${{ runner.os }}-r-pkg- 
+              
+        - name: Ensure pak is installed
+          run: |
+            R -e 'if (!requireNamespace("pak", quietly = TRUE)) install.packages("pak", repos = "https://cloud.r-project.org")'      
   
         - name: Install R package dependencies (try pak)
           id: pak-install
