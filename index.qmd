@@ -5,10 +5,6 @@ format:
     embed-resources: true
     fig-align: center
     df-print: paged
-    grid:
-      body-width: 1500px
-      margin-width: 0px
-      gutter-width: 32px
 echo: false
 ---
 
