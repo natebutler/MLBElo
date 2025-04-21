@@ -7,6 +7,9 @@
 # ignore local data
 elo_rating.rds
 
+elo_updates.R
+elo_mlb.R
+
 /.quarto/
 
 # History files
@@ -58,8 +61,5 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
-
-# ignore local data
-boyd.rds
 
 /.quarto/

@@ -95,24 +95,32 @@ initialize_elo <- function(regress_to_mean = 0.75){
 }
 
 # Function that uses all functions to return a single dataframe of teams and records
-update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-15", end_date = Sys.Date(), k = 10) {
+update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-17", end_date = Sys.Date(), k = 10) {
   date_seq <- seq.Date(as.Date(start_date), as.Date(end_date), by = "day")
   
   elo_ratings <- tibble(initialize_elo(regress))
   elo_history <- list()
   previous_elo <- elo_ratings
   
-  # Initialize team records to 0-0 for all teams
   team_records <- tibble(team = elo_ratings$team, wins = 0, losses = 0)
+  
+  initial_elo <- elo_ratings %>%
+    mutate(
+      `Daily Elo Change` = 0,
+      Wins = 0,
+      Losses = 0,
+      Date = as.Date(start_date)
+    ) %>%
+    rename(`Team` = team, `Elo Rating` = elo) %>%
+    select(`Team`, `Elo Rating`, `Daily Elo Change`, Wins, Losses, Date)
+  
+  elo_history[[as.character(start_date)]] <- initial_elo
   
   for (current_date in date_seq) {
     current_date <- format(as.Date(current_date), "%Y-%m-%d")
     games <- ParserGameByDate(current_date)
     
-    if (is.null(games)) {
-      #message("No games found on ", current_date, "; skipping.")
-      next
-    }
+    if (is.null(games)) next
     
     valid_names <- names(games)
     valid_names <- valid_names[!is.na(valid_names) & valid_names != ""]
@@ -122,10 +130,7 @@ update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-15", end_da
       filter(dates_games_seriesDescription == "Regular Season") %>%
       filter(dates_games_status_detailedState == "Final")
     
-    if (nrow(games) == 0) {
-      #message("No *finished* regular season games on ", current_date, "; skipping.")
-      next
-    }
+    if (nrow(games) == 0) next
     
     games <- games %>%
       filter(!is.na(dates_games_teams_home_score), !is.na(dates_games_teams_away_score)) %>%
@@ -136,10 +141,7 @@ update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-15", end_da
         away_score = as.numeric(dates_games_teams_away_score)
       )
     
-    if (nrow(games) == 0) {
-      #message("No *finished* regular season games on ", current_date, "; skipping.")
-      next
-    }
+    if (nrow(games) == 0) next
     
     for (i in seq_len(nrow(games))) {
       game <- games[i, ]
@@ -163,10 +165,8 @@ update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-15", end_da
       }
     }
     
-    # Round Elo ratings
     elo_ratings$elo <- round(elo_ratings$elo, 1)
     
-    # Create record_df for the teams that played today
     record_df <- tibble(
       team = c(games$home_team, games$away_team),
       wins = c(as.integer(games$dates_games_teams_home_leagueRecord_wins),
@@ -181,28 +181,28 @@ update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-15", end_da
         .groups = "drop"
       )
     
-    # Update the master record
     team_records <- team_records %>%
       rows_update(record_df, by = "team")
     
-    # Join today's Elo snapshot with previous day's and updated record
     daily_elo <- elo_ratings %>%
       left_join(previous_elo, by = "team", suffix = c("", "_prev")) %>%
       mutate(
-        date = current_date,
+        date = as.Date(current_date),
         delta_elo = elo - elo_prev
       ) %>%
       left_join(team_records, by = "team") %>%
       arrange(desc(elo)) %>%
-      select("Team" = team, "Elo Rating" = elo, "Daily Elo Change" = delta_elo, 
-             "Wins" = wins, "Losses" = losses)
+      select("Team" = team, "Elo Rating" = elo, "Daily Elo Change" = delta_elo,
+             "Wins" = wins, "Losses" = losses, 'Date' = date)
     
     elo_history[[as.character(current_date)]] <- daily_elo
     previous_elo <- elo_ratings
   }
   
-  latest_day <- names(elo_history)[length(elo_history)]
-  return(elo_history[[latest_day]])
+  # Bind all days together and return a single long-format tibble
+  full_elo_df <- bind_rows(elo_history)
+  
+  return(full_elo_df)
 }
 
 ################################################################################
@@ -211,16 +211,23 @@ update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-15", end_da
 
 elo_results <- update_elo_ratings(regress = 0.2, k = 7)
 
-team_logos <- load_mlb_teams() %>% select(team_name, team_logo_espn)
+team_logos <- load_mlb_teams() %>% 
+  select(team_name, team_abbr, team_color, team_logo_espn)
 
-elo_today <- elo_results %>%
-  mutate(Team = ifelse(Team == "Athletics", "Oakland Athletics", Team))
-
-elo_with_logos <- elo_today %>%
+elo_with_logos <- elo_results %>%
+  mutate(Team = ifelse(Team == "Athletics", "Oakland Athletics", Team)) %>%
   left_join(team_logos, by = c("Team" = "team_name")) %>%
-  mutate(elo_rank = min_rank(desc(`Elo Rating`))) %>%
-  select("Rank" = elo_rank, "Logo" = team_logo_espn, Team, `Elo Rating`, 
-         `Daily Elo Change`, Wins, Losses) %>%
-  mutate(Team = ifelse(Team == "Oakland Athletics","Athletics", Team))
+  mutate(
+    Team = ifelse(Team == "Oakland Athletics", "Athletics", Team)
+  ) %>%
+  group_by(Date) %>%
+  mutate('Elo Rank' = min_rank(desc(`Elo Rating`)))
+
+# elo_with_logos <- elo_today %>%
+#   left_join(team_logos, by = c("Team" = "team_name")) %>%
+#   mutate(elo_rank = min_rank(desc(`Elo Rating`))) %>%
+#   # select("Rank" = elo_rank, "Logo" = team_logo_espn, Team, `Elo Rating`, 
+#   #        `Daily Elo Change`, Wins, Losses) %>%
+#   mutate(Team = ifelse(Team == "Oakland Athletics","Athletics", Team))
 
 saveRDS(elo_with_logos, file = "elo_rating.rds")
