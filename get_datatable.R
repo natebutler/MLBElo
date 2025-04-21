@@ -174,7 +174,12 @@ update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-15", end_da
       losses = c(as.integer(games$dates_games_teams_home_leagueRecord_losses),
                  as.integer(games$dates_games_teams_away_leagueRecord_losses))
     ) %>%
-      distinct(team, .keep_all = TRUE)
+      group_by(team) %>%
+      summarise(
+        wins = max(wins, na.rm = TRUE),
+        losses = max(losses, na.rm = TRUE),
+        .groups = "drop"
+      )
     
     # Update the master record
     team_records <- team_records %>%
@@ -204,7 +209,7 @@ update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-15", end_da
 ################################################################################
 ###### Get Data
 
-elo_results <- update_elo_ratings(regress = 0.6, k = 4)
+elo_results <- update_elo_ratings(regress = 0.2, k = 7)
 
 team_logos <- load_mlb_teams() %>% select(team_name, team_logo_espn)
 
@@ -219,4 +224,3 @@ elo_with_logos <- elo_today %>%
   mutate(Team = ifelse(Team == "Oakland Athletics","Athletics", Team))
 
 saveRDS(elo_with_logos, file = "elo_rating.rds")
-
