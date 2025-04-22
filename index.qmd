@@ -5,8 +5,6 @@ format:
     embed-resources: true
     fig-align: center
     df-print: paged
-    grid:
-      body-width: 1000px  # Optional: makes content slightly wider
 echo: false
 ---
 
@@ -38,7 +36,7 @@ latest_elo_df <- elo_ratings %>%
   ungroup()
 
 latest_elo_df %>%
-  select(`Elo Rank`, "Logo" = team_logo_espn, Team, `Elo Rating`, 
+  select(Rank, "Logo" = team_logo_espn, Team, `Elo Rating`, 
          `Daily Elo Change`, Wins, Losses) %>%
   gt() %>%
   text_transform(
@@ -52,7 +50,7 @@ latest_elo_df %>%
 
 ```{r}
 #| fig-width: 12
-#| fig-height: 14
+#| fig-height: 16
 ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, color = team_abbr)) +
   geom_line(linewidth = 1) +
   geom_mlb_scoreboard_logos(
