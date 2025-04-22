@@ -49,8 +49,8 @@ latest_elo_df %>%
 ```
 
 ```{r}
-#| fig-width: 12
-#| fig-height: 16
+#| fig-width: 15
+#| fig-height: 17
 ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, color = team_abbr)) +
   geom_line(linewidth = 1) +
   geom_mlb_scoreboard_logos(
@@ -61,8 +61,8 @@ ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, 
   ) +
   scale_color_mlb(type = "primary") +
   scale_y_continuous(
-    limits = c(1425, 1550),
-    breaks = seq(1425, 1550, by = 25)
+    limits = c(1425, 1575),
+    breaks = seq(1425, 1575, by = 25)
   ) +
   labs(
     title = "MLB Elo Ratings Over Time",
@@ -72,10 +72,10 @@ ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, 
   theme_minimal() +
   theme(
     legend.position = "none",
-    axis.text = element_text(size = 14),    # Adjust axis text size
-    axis.title = element_text(size = 16),   # Adjust axis title size
-    plot.title = element_text(size = 24),   # Adjust plot title size
-    legend.text = element_text(size = 12)   # Adjust legend text size
+    axis.text = element_text(size = 18),    # Adjust axis text size
+    axis.title = element_text(size = 20),   # Adjust axis title size
+    plot.title = element_text(size = 28),   # Adjust plot title size
+    legend.text = element_text(size = 16)   # Adjust legend text size
   )
 
 
