@@ -78,6 +78,7 @@ ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, 
     legend.text = element_text(size = 12)   # Adjust legend text size
   )
 
+
 ```
 
 
