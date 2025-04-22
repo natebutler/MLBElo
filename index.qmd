@@ -5,6 +5,8 @@ format:
     embed-resources: true
     fig-align: center
     df-print: paged
+    grid:
+      body-width: 1000px  # Optional: makes content slightly wider
 echo: false
 ---
 
@@ -50,7 +52,7 @@ latest_elo_df %>%
 
 ```{r}
 #| fig-width: 12
-#| fig-height: 18
+#| fig-height: 14
 ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, color = team_abbr)) +
   geom_line(linewidth = 1) +
   geom_mlb_scoreboard_logos(
