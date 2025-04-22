@@ -209,7 +209,7 @@ update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-17", end_da
 ################################################################################
 ###### Get Data
 
-elo_results <- update_elo_ratings(regress = 0.3, k = 7)
+elo_results <- update_elo_ratings(regress = 0.2, k = 7)
 
 team_logos <- load_mlb_teams() %>% 
   select(team_name, team_abbr, team_color, team_logo_espn)

@@ -61,8 +61,8 @@ ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, 
   ) +
   scale_color_mlb(type = "primary") +
   scale_y_continuous(
-    limits = c(1425, 1575),
-    breaks = seq(1425, 1575, by = 25)
+    limits = c(1425, 1550),
+    breaks = seq(1425, 1550, by = 25)
   ) +
   labs(
     title = "MLB Elo Ratings Over Time",
