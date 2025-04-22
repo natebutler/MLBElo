@@ -2,10 +2,8 @@ name: daily-render-and-publish
 
 on:
   schedule:
-    - cron: '0 14 * * *'   # 9:00 AM CDT
-    - cron: '0 19 * * *'   # 2:00 PM CDT
-    - cron: '0 22 * * *'   # 5:00 PM CDT
-    - cron: '0 1 * * *'    # 8:00 PM CDT
+    - cron: '0 10 * * *'   # 5:00 AM CDT
+    - cron: '0 3 * * *'    # 10:00 PM CDT (22)
     - cron: '0 5 * * *'    # 12:00 AM CDT
   push:
     branches: [main, master]
