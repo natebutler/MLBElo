@@ -57,7 +57,9 @@ ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, 
     data = latest_elo_df,
     mapping = aes(x = as.Date(Date), y = `Elo Rating`, team_abbr = team_abbr),
     inherit.aes = FALSE,
-    width = 0.04
+    width = 0.04,
+    position = position_jitter(width = 0, 
+                               height = 3)
   ) +
   scale_color_mlb(type = "primary") +
   scale_y_continuous(
@@ -80,6 +82,5 @@ ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, 
 
 
 ```
-
 
 Last Updated: `r {Sys.setenv(TZ = "America/Chicago"); format(Sys.time(), "%Y-%m-%d %H:%M %Z")}`

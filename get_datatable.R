@@ -128,7 +128,7 @@ update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-17", end_da
     
     games <- games %>%
       filter(dates_games_seriesDescription == "Regular Season") %>%
-      filter(dates_games_status_detailedState == "Final")
+      filter(dates_games_status_abstractGameState == "Final")
     
     if (nrow(games) == 0) next
     
