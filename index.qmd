@@ -51,6 +51,7 @@ latest_elo_df %>%
 ```{r}
 #| fig-width: 15
 #| fig-height: 17
+
 ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, color = team_abbr)) +
   geom_line(linewidth = 1) +
   geom_mlb_scoreboard_logos(
@@ -63,6 +64,12 @@ ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, 
   scale_y_continuous(
     limits = c(1425, 1550),
     breaks = seq(1425, 1550, by = 25)
+  ) + 
+  scale_x_date(
+    limits = c(min(as.Date(elo_ratings$Date)), max(as.Date(elo_ratings$Date)) + 1),
+    breaks = seq(min(as.Date(elo_ratings$Date)), max(as.Date(elo_ratings$Date)), 
+                 length.out = 6),
+    date_labels = "%b %d"
   ) +
   labs(
     title = "MLB Elo Ratings Over Time",
