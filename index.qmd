@@ -51,6 +51,21 @@ latest_elo_df %>%
 ```{r}
 #| fig-width: 15
 #| fig-height: 17
+#| message: false
+
+# Compute min and max Elo rounded to nearest 5
+min_elo <- floor(min(elo_ratings$`Elo Rating`, na.rm = TRUE) / 5) * 5
+true_max_elo <- max(elo_ratings$`Elo Rating`, na.rm = TRUE)
+max_elo <- ceiling(true_max_elo / 5) * 5
+
+# Ensure top break is strictly greater than true max Elo
+max_break <- max_elo + ifelse(max_elo == true_max_elo, 5, 0)
+
+# Breaks every 25 Elo points across the range
+base_breaks <- seq(min_elo, max_break, by = 20)
+
+# Add 1500, min_elo, and max_break manually
+custom_breaks <- sort(unique(c(base_breaks, 1500, min_elo, max_break)))
 
 ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, color = team_abbr)) +
   geom_line(linewidth = 1) +
@@ -62,13 +77,12 @@ ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, 
   ) +
   scale_color_mlb(type = "primary") +
   scale_y_continuous(
-    limits = c(1425, 1550),
-    breaks = seq(1425, 1550, by = 25)
+  limits = c(min_elo, max_break),
+  breaks = custom_breaks
   ) + 
   scale_x_date(
     limits = c(min(as.Date(elo_ratings$Date)), max(as.Date(elo_ratings$Date)) + 1),
-    breaks = seq(min(as.Date(elo_ratings$Date)), max(as.Date(elo_ratings$Date)), 
-                 length.out = 6),
+    breaks = seq(min(as.Date(elo_ratings$Date)), max(as.Date(elo_ratings$Date)), length.out = 6),
     date_labels = "%b %d"
   ) +
   labs(
@@ -79,12 +93,11 @@ ggplot(elo_ratings, aes(x = as.Date(Date), y = `Elo Rating`, group = team_abbr, 
   theme_minimal() +
   theme(
     legend.position = "none",
-    axis.text = element_text(size = 18),    # Adjust axis text size
-    axis.title = element_text(size = 20),   # Adjust axis title size
-    plot.title = element_text(size = 28),   # Adjust plot title size
-    legend.text = element_text(size = 16)   # Adjust legend text size
+    axis.text = element_text(size = 18),
+    axis.title = element_text(size = 20),
+    plot.title = element_text(size = 28),
+    legend.text = element_text(size = 16)
   )
-
 
 ```
 
