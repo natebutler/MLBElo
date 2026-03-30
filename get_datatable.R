@@ -70,18 +70,35 @@ update_elo <- function(team_elo, opponent_elo, outcome, k = 10) {
 # create elo from last year
 initialize_elo <- function(regress_to_mean = 0.75){
   # Old Elo ratings and the corresponding team names (last year's ranking)
-  last_year_teams <- c("Los Angeles Dodgers", "San Diego Padres", "New York Yankees", "Milwaukee Brewers", 
-                       "Arizona Diamondbacks", "New York Mets", "Atlanta Braves", "Houston Astros", 
-                       "Seattle Mariners", "Philadelphia Phillies", "Chicago Cubs", "Detroit Tigers", 
-                       "Baltimore Orioles", "Cleveland Guardians", "Kansas City Royals", "Tampa Bay Rays", 
-                       "San Francisco Giants", "St. Louis Cardinals", "Boston Red Sox", "Texas Rangers", 
-                       "Cincinnati Reds", "Minnesota Twins", "Toronto Blue Jays", "Pittsburgh Pirates", 
-                       "Washington Nationals", "Miami Marlins", "Athletics", "Los Angeles Angels", "Colorado Rockies", 
-                       "Chicago White Sox")
+  # last_year_teams <- c("Los Angeles Dodgers", "San Diego Padres", "New York Yankees", "Milwaukee Brewers", 
+  #                      "Arizona Diamondbacks", "New York Mets", "Atlanta Braves", "Houston Astros", 
+  #                      "Seattle Mariners", "Philadelphia Phillies", "Chicago Cubs", "Detroit Tigers", 
+  #                      "Baltimore Orioles", "Cleveland Guardians", "Kansas City Royals", "Tampa Bay Rays", 
+  #                      "San Francisco Giants", "St. Louis Cardinals", "Boston Red Sox", "Texas Rangers", 
+  #                      "Cincinnati Reds", "Minnesota Twins", "Toronto Blue Jays", "Pittsburgh Pirates", 
+  #                      "Washington Nationals", "Miami Marlins", "Athletics", "Los Angeles Angels", "Colorado Rockies", 
+  #                      "Chicago White Sox")
+  # 
+  # last_year_elo_ratings <- c(1583, 1555, 1545, 1544, 1543, 1542, 1541, 1541, 1535, 1533, 1529, 
+  #                            1521, 1520, 1517, 1512, 1510, 1507, 1500, 1498, 1495, 1494, 1492, 
+  #                            1489, 1476, 1463, 1455, 1453, 1434, 1431, 1394)
   
-  last_year_elo_ratings <- c(1583, 1555, 1545, 1544, 1543, 1542, 1541, 1541, 1535, 1533, 1529, 
-                             1521, 1520, 1517, 1512, 1510, 1507, 1500, 1498, 1495, 1494, 1492, 
-                             1489, 1476, 1463, 1455, 1453, 1434, 1431, 1394)
+  last_year_teams <- c(
+    "Los Angeles Dodgers", "Toronto Blue Jays", "Milwaukee Brewers", "Philadelphia Phillies",
+    "New York Yankees", "Chicago Cubs", "Boston Red Sox", "San Diego Padres",
+    "Seattle Mariners", "Cleveland Guardians", "Texas Rangers", "Kansas City Royals",
+    "New York Mets", "Houston Astros", "Arizona Diamondbacks", "Cincinnati Reds",
+    "Atlanta Braves", "Detroit Tigers", "San Francisco Giants", "Tampa Bay Rays",
+    "Athletics", "Baltimore Orioles", "Pittsburgh Pirates", "Miami Marlins",
+    "St. Louis Cardinals", "Minnesota Twins", "Chicago White Sox", "Los Angeles Angels",
+    "Washington Nationals", "Colorado Rockies"
+  )
+  
+  last_year_elo_ratings <- c(
+    1575, 1558, 1555, 1554, 1548, 1542, 1539, 1537, 1534, 1518,
+    1517, 1515, 1513, 1511, 1510, 1509, 1506, 1506, 1505, 1499,
+    1492, 1488, 1487, 1486, 1479, 1460, 1449, 1442, 1437, 1377
+  )
   
   elo_df <- data.frame(team = last_year_teams, elo_old = last_year_elo_ratings)
   
@@ -95,7 +112,7 @@ initialize_elo <- function(regress_to_mean = 0.75){
 }
 
 # Function that uses all functions to return a single dataframe of teams and records
-update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-17", end_date = Sys.Date(), k = 10) {
+update_elo_ratings <- function(regress = 0.75, start_date = "2026-03-24", end_date = Sys.Date(), k = 10) {
   date_seq <- seq.Date(as.Date(start_date), as.Date(end_date), by = "day")
   
   elo_ratings <- tibble(initialize_elo(regress))
@@ -209,7 +226,7 @@ update_elo_ratings <- function(regress = 0.75, start_date = "2025-03-17", end_da
 ################################################################################
 ###### Get Data
 
-elo_results <- update_elo_ratings(regress = 0.2, k = 7)
+elo_results <- update_elo_ratings(regress = 0.2, k = 7, start_date = "2026-03-24")
 
 team_logos <- load_mlb_teams() %>% 
   select(team_name, team_abbr, team_color, team_logo_espn)

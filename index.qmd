@@ -10,6 +10,7 @@ echo: false
 
 ```{r}
 #| message: false
+#| warning: false
 # load required packages
 library(httr)
 library(jsonlite)
@@ -52,6 +53,7 @@ latest_elo_df %>%
 #| fig-width: 15
 #| fig-height: 17
 #| message: false
+#| eval: false
 
 # Compute min and max Elo rounded to nearest 5
 min_elo <- floor(min(elo_ratings$`Elo Rating`, na.rm = TRUE) / 5) * 5
